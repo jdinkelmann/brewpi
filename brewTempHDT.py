@@ -30,10 +30,10 @@ def sendData(temperature, temperature_f, humidity):
     iSBaseURL = f'https://groker.init.st/api/events?accessKey={IS_KEY}&bucketKey={IS_BUCKET_KEY}'
     
     f = urlopen(baseURL + "&field1=%s&field2=%s&field3=%s" % (temperature, temperature_f, humidity))
-    print (f.read())
+    #print (f.read())
     
     inState = urlopen(iSBaseURL + "&humidity=%s&ahrenheit=%s&celsius=%s" % (humidity,temperature_f, temperature))
-    print (inState.read())
+    #print (inState.read())
     #print ("tempC " + str(temperature) + ",  " + str(temperature_f) + ", humidity " + str(humidity))
     
     f.close()
@@ -46,15 +46,16 @@ def main():
         
         if humidity is not None and temperature is not None:
         #print("Temp={0:0.1f}C  Humidity={1:0.1f}%".format(temperature, humidity))
-            temperature_f = (temperature * 1.8) + 32
+            # + 33.8 is for calibration based on other temp sensors
+            temperature_f = (temperature * 1.8) + 33.8
             print(humidity)
-            print(temperature)
+            #print(temperature)
             print(temperature_f)
             sendData(temperature,temperature_f, humidity)
             
         else:
             print("Sensor failure. Check wiring.");
-        time.sleep(5);
+        time.sleep(10);
     
 # call main
 
