@@ -2,6 +2,7 @@ from urllib.request import urlopen
 
 class Ifttt():
     IFTTT_KEY = "dmQzjKzewvH4fukMmoBIiJ"
+    LAST_EVENT = ""
 
     def __init__(self, *args, **kwargs):
         super(Ifttt, self).__init__(*args, **kwargs)

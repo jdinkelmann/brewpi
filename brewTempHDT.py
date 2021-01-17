@@ -4,6 +4,7 @@ import time
 import board
 #import Adafruit_DHT
 from urllib.request import urlopen
+import Ifttt
  
 # Initial the dht device, with data pin connected to:
 # dhtDevice = adafruit_dht.DHT22(board.D4)
@@ -35,18 +36,7 @@ def sendDataToThingSpeak(temperature, temperature_f, humidity):
     time.sleep(int(MY_DELAY))
 
 def sendWebhookToIftt(currentTemp):
-    if currentTemp < 70:
-        eventName = "fermenton"
-    elif currentTemp > 70.8:
-        eventName = "fermentoff"
-    else:
-        print("so warm!")
-
-    if eventName is not None:
-        #send event
-        Ifttt_url = f'https://maker.ifttt.com/trigger/{eventName}/with/key/{IFTTT_KEY}'
-        f = urlopen(Ifttt_url)
-        f.close()
+    Ifttt.sendRequest(currentTemp)
 
 
 def main():
@@ -54,7 +44,7 @@ def main():
         humidity, temperature = getSensorData()
         
         if humidity is not None and temperature is not None:
-            # + 33.8 is for calibration based on other temp sensors
+            # + 33.8 is for calibration based on other temp sensors, should be 32 YOLO
             temperature_f = (temperature * 1.8) + 33.8
             sendWebhookToIftt(temperature_f)
             sendDataToThingSpeak(temperature,temperature_f, humidity)
