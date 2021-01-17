@@ -2,7 +2,7 @@ import sys
 import os
 import time
 import board
-import Adafruit_DHT
+#import Adafruit_DHT
 from urllib.request import urlopen
  
 # Initial the dht device, with data pin connected to:
@@ -11,50 +11,56 @@ from urllib.request import urlopen
 # you can pass DHT22 use_pulseio=False if you wouldn't like to use pulseio.
 # This may be necessary on a Linux single board computer like the Raspberry Pi,
 # but it will not work in CircuitPython.
-DHT_SENSOR = Adafruit_DHT.DHT11
-DHT_PIN = 4
-myAPI = "HVFDZ6711P0WAW4S"
+DHT11_SENSOR = Adafruit_DHT.DHT11
+DHT11_PIN = 4
+TS_KEY = "HVFDZ6711P0WAW4S"
 MY_DELAY = 15
 
-IS_KEY = "ist_vpgVcIHaPWXqH2NsA3-HdXd2uy3Tg9oY"
-IS_BUCKET_KEY = "SNS9MBQYJ4UE"
+IFTTT_KEY = "dmQzjKzewvH4fukMmoBIiJ"
+
+
 
 def getSensorData():
-    humidity, temperature = Adafruit_DHT.read(DHT_SENSOR, DHT_PIN)
+    humidity, temperature = Adafruit_DHT.read(DHT11_SENSOR, DHT11_PIN)
     
     # return dict
     return (humidity, temperature)
 
-def sendData(temperature, temperature_f, humidity):
-    baseURL = 'https://api.thingspeak.com/update?api_key=%s' % myAPI
-    iSBaseURL = f'https://groker.init.st/api/events?accessKey={IS_KEY}&bucketKey={IS_BUCKET_KEY}'
-    
+def sendDataToThingSpeak(temperature, temperature_f, humidity):
+    baseURL = 'https://api.thingspeak.com/update?api_key=%s' % TS_KEY
     f = urlopen(baseURL + "&field1=%s&field2=%s&field3=%s" % (temperature, temperature_f, humidity))
     #print (f.read())
-    
-    inState = urlopen(iSBaseURL + "&humidity=%s&ahrenheit=%s&celsius=%s" % (humidity,temperature_f, temperature))
-    #print (inState.read())
-    #print ("tempC " + str(temperature) + ",  " + str(temperature_f) + ", humidity " + str(humidity))
-    
+
     f.close()
     time.sleep(int(MY_DELAY))
-    
+
+def sendWebhookToIftt(currentTemp):
+    if currentTemp < 70:
+        eventName = "fermenton"
+    elif currentTemp > 70.8:
+        eventName = "fermentoff"
+    else:
+        print("so warm!")
+
+    if eventName is not None:
+        #send event
+        Ifttt_url = f'https://maker.ifttt.com/trigger/{eventName}/with/key/{IFTTT_KEY}'
+        f = urlopen(Ifttt_url)
+        f.close()
+
 
 def main():
     while True:
         humidity, temperature = getSensorData()
         
         if humidity is not None and temperature is not None:
-        #print("Temp={0:0.1f}C  Humidity={1:0.1f}%".format(temperature, humidity))
             # + 33.8 is for calibration based on other temp sensors
             temperature_f = (temperature * 1.8) + 33.8
-            print(humidity)
-            #print(temperature)
-            print(temperature_f)
-            sendData(temperature,temperature_f, humidity)
+            sendWebhookToIftt(temperature_f)
+            sendDataToThingSpeak(temperature,temperature_f, humidity)
             
         else:
-            print("Sensor failure. Check wiring.");
+            print("Sensor did not respond");
         time.sleep(10);
     
 # call main
