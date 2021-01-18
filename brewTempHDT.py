@@ -2,7 +2,7 @@ import sys
 import os
 import time
 import board
-#import Adafruit_DHT
+import Adafruit_DHT
 from urllib.request import urlopen
 import Ifttt
  
@@ -46,8 +46,9 @@ def main():
         if humidity is not None and temperature is not None:
             # + 33.8 is for calibration based on other temp sensors, should be 32 YOLO
             temperature_f = (temperature * 1.8) + 33.8
+            #print(temperature_f)
             sendWebhookToIftt(temperature_f)
-            sendDataToThingSpeak(temperature,temperature_f, humidity)
+            #sendDataToThingSpeak(temperature,temperature_f, humidity)
             
         else:
             print("Sensor did not respond");
