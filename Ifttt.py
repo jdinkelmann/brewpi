@@ -13,9 +13,9 @@ class Ifttt():
 def checkTemperature(currentTemp):
     #print("Current Temp: " + str(currentTemp) + "F")
     
-    if currentTemp < 69:
+    if currentTemp < 69.0:
         eventName = "fermenton"
-    elif currentTemp > 71:
+    elif currentTemp > 71.0:
         eventName = "fermentoff"
     else:
         eventName = ""
@@ -29,7 +29,7 @@ def sendRequest(currentTemp):
     if currentTemp is not None:
         if Ifttt.LAST_EVENT is not currentTempEvent:
             Ifttt.LAST_EVENT = currentTempEvent
-            print("calling webhook")
+            print(f'calling webhook with {currentTempEvent}')
             Ifttt_url = f'https://maker.ifttt.com/trigger/{currentTempEvent}/with/key/dmQzjKzewvH4fukMmoBIiJ'
             f = urlopen(Ifttt_url)
             print(f.read())
