@@ -13,11 +13,11 @@ import thingspeak
 # you can pass DHT22 use_pulseio=False if you wouldn't like to use pulseio.
 # This may be necessary on a Linux single board computer like the Raspberry Pi,
 # but it will not work in CircuitPython.
-airSensor = Adafruit_DHT.DHT22
-airSensorPin = 4
+airSensor = Adafruit_DHT.DHT11
+airSensorPin = 17
 
-kegOneSensor = Adafruit_DHT.DHT11
-kegOneSensorPin = 17
+kegOneSensor = Adafruit_DHT.DHT22
+kegOneSensorPin = 4
 
 kegTwoSensor = Adafruit_DHT.DHT22
 kegTwoSensorPin = 27
