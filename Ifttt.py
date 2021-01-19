@@ -23,6 +23,8 @@ def sendRequest(currentTemp):
     currentTempEvent = checkTemperature(currentTemp)
 
     if currentTemp is not None:
-        Ifttt_url = f'https://maker.ifttt.com/trigger/{currentTempEvent}/with/key/{IFTTT_KEY}'
-        f = urlopen(Ifttt_url)
-        f.close()
+        if currentTempEvent is not Ifttt.LAST_EVENT:
+            Ifttt.LAST_EVENT = currentTempEvent
+            Ifttt_url = f'https://maker.ifttt.com/trigger/{currentTempEvent}/with/key/{Ifttt.IFTTT_KEY}'
+            f = urlopen(Ifttt_url)
+            f.close()
